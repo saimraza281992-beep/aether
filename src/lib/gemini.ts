@@ -1,10 +1,24 @@
 import { GoogleGenAI, Type } from '@google/genai';
 
-// Initialize Gemini API
-// The API key is injected via Vite's define plugin from process.env
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+// Lazy initialize Gemini API so it doesn't crash the app on load if the key is missing
+let aiClient: GoogleGenAI | null = null;
+
+function getAI(): GoogleGenAI {
+  if (!aiClient) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is missing. Please add it to your environment variables.");
+      // We still initialize it to prevent crashing, but API calls will fail gracefully
+      aiClient = new GoogleGenAI({ apiKey: "missing_key" });
+    } else {
+      aiClient = new GoogleGenAI({ apiKey: apiKey as string });
+    }
+  }
+  return aiClient;
+}
 
 export async function interpretDream(dreamText: string, language: 'en' | 'ur', problem?: string) {
+  const ai = getAI();
   const systemInstruction = language === 'ur' 
     ? "You are a mystical Sufi dream interpreter. Interpret the dream in poetic, beautiful Urdu (using Noto Nastaliq style phrasing). Extract core symbols, emotions, a waking quest, and creative prompts. Return JSON."
     : "You are a mystical Sufi dream interpreter. Interpret the dream in a poetic, ethereal, and spiritual tone. Extract core symbols, emotions, a waking quest, and creative prompts. Return JSON.";
@@ -71,6 +85,7 @@ export async function interpretDream(dreamText: string, language: 'en' | 'ur', p
 }
 
 export async function generateOracleSeed(language: 'en' | 'ur') {
+  const ai = getAI();
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3.1-pro-preview',
@@ -89,6 +104,7 @@ export async function generateOracleSeed(language: 'en' | 'ur') {
 }
 
 export async function generateDreamImage(dreamText: string, symbols: string[]) {
+  const ai = getAI();
   try {
     const prompt = `A surreal, ethereal, dark mystical painting of a dream. Deep indigo, midnight purple, soft gold accents, glowing cyan and magenta ethereal threads. Sufi mysticism, magical realism. Elements: ${symbols.join(', ')}. Dream context: ${dreamText.substring(0, 100)}`;
     
