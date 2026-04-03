@@ -1,0 +1,5 @@
+{
+  "name": "AETHER",
+  "description": "Weave your dreams into the living tapestry of the collective subconscious.",
+  "requestFramePermissions": ["microphone", "geolocation"]
+}

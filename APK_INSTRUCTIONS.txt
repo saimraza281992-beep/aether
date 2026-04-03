@@ -1,0 +1,24 @@
+// Instructions for wrapping AETHER into an Android APK using Bubblewrap
+
+/*
+1. Ensure your PWA is deployed to a public URL (e.g., via Vercel, Netlify, or Firebase Hosting).
+2. Install Bubblewrap CLI globally:
+   npm i -g @google/bubblewrap
+
+3. Initialize the Bubblewrap project in a new directory:
+   bubblewrap init --manifest https://your-deployed-url.com/manifest.webmanifest
+
+4. Bubblewrap will prompt you for details. Most will be auto-filled from your manifest.
+   - Set the Application Name to "AETHER"
+   - Set the Short Name to "AETHER"
+   - Set the Application ID (e.g., com.aether.app)
+   - Set the Display Mode to "standalone" or "fullscreen"
+   - Set the Status Bar Color to "#0f0c29"
+
+5. Build the APK:
+   bubblewrap build
+
+6. The output will be an `app-release-signed.apk` file which you can test on your Android device or upload to the Google Play Store.
+
+Note: Ensure your deployed site serves the `assetlinks.json` file at `/.well-known/assetlinks.json` to verify ownership for Digital Asset Links, which removes the browser URL bar in the TWA (Trusted Web Activity).
+*/
